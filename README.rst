@@ -1,5 +1,5 @@
 Fractal Output
-======
+======================================
 
 |Build Status| |Version| |Pyversions|
 

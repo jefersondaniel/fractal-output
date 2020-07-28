@@ -3,6 +3,7 @@
 .cache
 .coverage
 .coverage.*
+.eggs
 coverage.xml
 venv/
 dist/
