@@ -3,7 +3,8 @@ from .resource import Item, Collection, Null
 
 
 class Transformer(ABC):
-    includes = []
+    available_includes = []
+    default_includes = []
 
     @abstractmethod
     def transform(self, source):

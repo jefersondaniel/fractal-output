@@ -70,7 +70,7 @@ class TestTransformer(object):
 
         assert '[]' == result
 
-    def test_transform_includes(self):
+    def test_transform_default_includes(self):
         User = namedtuple('User', 'first_name telephones address')
         Telephone = namedtuple('Telephone', 'number')
         Address = namedtuple('Address', 'street')
@@ -88,7 +88,7 @@ class TestTransformer(object):
                 }
 
         class UserTransformer(Transformer):
-            includes = [
+            default_includes = [
                 'telephones',
                 'address',
                 'subscription'
@@ -125,6 +125,60 @@ class TestTransformer(object):
         assert 'lala' == result['address']['street']
         assert not result['subscription']
 
+    def test_transform_available_includes(self):
+        CategoryGroup = namedtuple('CategoryGroup', 'categories')
+        Category = namedtuple('Category', 'name items')
+        CategoryItem = namedtuple('Item', 'name')
+
+        class CategoryGroupTransformer(Transformer):
+            default_includes = ['categories']
+            available_includes = ['lala', 'lele']
+
+            def transform(self, telephone):
+                return {}
+
+            def include_categories(self, group):
+                return self.collection(group.categories, CategoryTransformer())
+
+            def include_lala(self, group):
+                return self.null()
+
+            def include_lele(self, group):
+                return self.null()
+
+        class CategoryTransformer(Transformer):
+            available_includes = ['items']
+
+            def transform(self, category):
+                return {
+                    'name': category.name
+                }
+
+            def include_items(self, category):
+                return self.collection(category.items, CategoryItemTransformer())
+
+        class CategoryItemTransformer(Transformer):
+            def transform(self, item):
+                return {
+                    'name': item.name
+                }
+
+        group = CategoryGroup([
+            Category('a', [CategoryItem('book')])
+        ])
+
+        transformer = CategoryGroupTransformer()
+        item = Item(group, transformer)
+
+        manager = Manager()
+        result_light = manager.create_data(item, selected_includes=[]).get_data()
+        result_heavy = manager.create_data(item, selected_includes=['lala', 'categories.items']).get_data()
+
+        assert 'lala' not in result_light
+        assert 'lala' in result_heavy
+        assert 'items' not in result_light['categories'][0]
+        assert 'book' == result_heavy['categories'][0]['items'][0]['name']
+
     def test_invalid_include(self):
         User = namedtuple('User', 'first_name address')
         Address = namedtuple('Address', 'street')
@@ -136,7 +190,7 @@ class TestTransformer(object):
                 }
 
         class UserTransformer(Transformer):
-            includes = [
+            default_includes = [
                 'lala'
             ]
 
