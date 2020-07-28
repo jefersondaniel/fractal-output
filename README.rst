@@ -40,8 +40,8 @@ Install:
 
 ''''
 
-.. |Build Status| image:: https://travis-ci.org/jefersondaniel/fractal_output.svg
-   :target: https://travis-ci.org/jefersondaniel/fractal_output
+.. |Build Status| image:: https://travis-ci.org/jefersondaniel/fractal-output.svg
+   :target: https://travis-ci.org/jefersondaniel/fractal-output
 
 .. |Version| image:: https://badge.fury.io/py/fractal_output.svg
    :target: https://pypi.python.org/pypi/fractal_output
