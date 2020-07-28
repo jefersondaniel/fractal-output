@@ -1,6 +1,6 @@
+mock
 coverage==5.2.1
 flake8==3.8.3
-mock==4.0.2
 phulpy==1.0.10
 pytest==5.4.3
 pytest-cov==2.10.0
