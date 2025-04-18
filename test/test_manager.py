@@ -4,6 +4,7 @@ from fractal_output import Manager, Transformer, Item, Collection, ResourceExcep
 
 
 class TestTransformer(object):
+    @pytest.mark.asyncio
     async def test_transform_item(self):
         User = namedtuple('User', 'first_name')
 
@@ -18,10 +19,11 @@ class TestTransformer(object):
         item = Item(user, transformer)
 
         manager = Manager()
-        result = await manager.create_data(item).to_json()
+        result = (await manager.create_data(item)).to_json()
 
         assert '{"firstName": "abigail"}' == result
 
+    @pytest.mark.asyncio
     async def test_transform_collection(self):
         User = namedtuple('User', 'first_name')
 
@@ -36,10 +38,11 @@ class TestTransformer(object):
         item = Collection(users, transformer)
 
         manager = Manager()
-        result = await manager.create_data(item).to_json()
+        result = (await manager.create_data(item)).to_json()
 
         assert '[{"firstName": "abigail"}, {"firstName": "mary"}]' == result
 
+    @pytest.mark.asyncio
     async def test_transform_item_empty(self):
         class UserTransformer(Transformer):
             async def transform(self, user):
@@ -51,10 +54,11 @@ class TestTransformer(object):
         item = Item(None, transformer)
 
         manager = Manager()
-        result = await manager.create_data(item).get_data()
+        result = (await manager.create_data(item)).get_data()
 
         assert not result
 
+    @pytest.mark.asyncio
     async def test_transform_collection_empty(self):
         class UserTransformer(Transformer):
             async def transform(self, user):
@@ -66,10 +70,11 @@ class TestTransformer(object):
         item = Collection(None, transformer)
 
         manager = Manager()
-        result = await manager.create_data(item).to_json()
+        result = (await manager.create_data(item)).to_json()
 
         assert '[]' == result
 
+    @pytest.mark.asyncio
     async def test_transform_default_includes(self):
         User = namedtuple('User', 'first_name telephones address')
         Telephone = namedtuple('Telephone', 'number')
@@ -118,13 +123,14 @@ class TestTransformer(object):
         item = Item(user, transformer)
 
         manager = Manager()
-        result = await manager.create_data(item).get_data()
+        result = (await manager.create_data(item)).get_data()
 
         assert 'abigail' == result['firstName']
         assert '1' == result['telephones'][0]['number']
         assert 'lala' == result['address']['street']
         assert not result['subscription']
 
+    @pytest.mark.asyncio
     async def test_transform_available_includes(self):
         CategoryGroup = namedtuple('CategoryGroup', 'categories')
         Category = namedtuple('Category', 'name items')
@@ -171,14 +177,15 @@ class TestTransformer(object):
         item = Item(group, transformer)
 
         manager = Manager()
-        result_light = await manager.create_data(item, selected_includes=[]).get_data()
-        result_heavy = await manager.create_data(item, selected_includes=['lala', 'categories.items']).get_data()
+        result_light = (await manager.create_data(item, selected_includes=[])).get_data()
+        result_heavy = (await manager.create_data(item, selected_includes=['lala', 'categories.items'])).get_data()
 
         assert 'lala' not in result_light
         assert 'lala' in result_heavy
         assert 'items' not in result_light['categories'][0]
         assert 'book' == result_heavy['categories'][0]['items'][0]['name']
 
+    @pytest.mark.asyncio
     async def test_invalid_include(self):
         User = namedtuple('User', 'first_name address')
         Address = namedtuple('Address', 'street')
