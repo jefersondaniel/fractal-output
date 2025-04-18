@@ -4,7 +4,7 @@ import fractal_output
 long_description = open('README.rst', 'r').read()
 
 setup(
-    name='fractal_output',
+    name='fractal-output',
     version=fractal_output.__version__,
     packages=['fractal_output'],
     setup_requires=['wheel'],
@@ -14,7 +14,7 @@ setup(
             "fractal_output = fractal_output.__main__:__main__"
         ],
     },
-    description="The task manager for python",
+    description="Provides a presentation and transformation layer for complex data output",
     long_description=long_description,
     url='https://github.com/jefersondaniel/fractal-output',
     author='Jeferson Daniel',
