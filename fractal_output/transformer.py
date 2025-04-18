@@ -7,7 +7,7 @@ class Transformer(ABC):
     default_includes = []
 
     @abstractmethod
-    def transform(self, source):
+    async def transform(self, source):
         raise NotImplementedError
 
     def item(self, source, transformer):
